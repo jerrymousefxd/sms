@@ -58,5 +58,25 @@ public class VoiceCallServiceImpl implements VoiceCallService {
 		vc.setId(new BigDecimal(id));
 		voiceCallMapper.updateByPrimaryKeySelective(vc);
 	}
+	public int updateVcByPhoneId(String phoneId1, String phoneId2, String file) {
+		// TODO Auto-generated method stub
+		VoiceCallExample vce=new VoiceCallExample();
+		Criteria c = vce.createCriteria();
+		c.andPhoneid1EqualTo(phoneId1);
+		c.andPhoneid2EqualTo(phoneId2);
+		List<VoiceCall> selectByExample = voiceCallMapper.selectByExample(vce);
+		if(selectByExample.size()==0){
+			vce=new VoiceCallExample();
+			Criteria w = vce.createCriteria();
+			w.andPhoneid1EqualTo(phoneId2);
+			w.andPhoneid2EqualTo(phoneId1);
+			selectByExample= voiceCallMapper.selectByExample(vce);
+			if(selectByExample.size()==0){
+				return 0;
+			}
+		}
+		selectByExample.get(0).setRecordfile(file);
+		return voiceCallMapper.updateByExample(selectByExample.get(0), vce);
+	}
 
 }
